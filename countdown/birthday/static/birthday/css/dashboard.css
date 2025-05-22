@@ -1,0 +1,333 @@
+/* Base styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+.dashboard-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Next Birthday Section */
+.next-birthday-section {
+  margin-bottom: 30px;
+}
+
+.next-birthday-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.next-birthday-card h4 {
+  color: #2c3e50;
+  margin-bottom: 5px;
+  font-size: 1.5rem;
+}
+
+.next-birthday-card p {
+  color: #7f8c8d;
+  margin-bottom: 15px;
+}
+
+/* Countdown Styles */
+.countdown-container {
+  margin: 1.5rem 0;
+}
+
+.countdown,
+.countdown-timer {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.countdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 60px;
+}
+
+.countdown-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #e74c3c;
+  display: block;
+}
+
+.countdown-label {
+  font-size: 0.7rem;
+  color: #95a5a6;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.countdown-item.today {
+  font-size: 1.5rem;
+  color: #2ecc71;
+  animation: pulse 1.5s infinite;
+}
+
+/* Search and Add Section */
+.search-add-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.add-button,
+.import-button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.add-button:hover,
+.import-button:hover {
+  background-color: #2980b9;
+}
+
+/* All Birthdays Section */
+.all-birthdays-section h3 {
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.birthdays-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.no-birthdays {
+  color: #7f8c8d;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Birthday Card Styles */
+.birthday-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.2rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.birthday-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.birthday-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.birthday-date {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.upcoming-info {
+  font-size: 0.9rem;
+  color: #3498db;
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.birthday-today .upcoming-info {
+  color: #2ecc71;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+/* Mini Countdown */
+.mini-countdown {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.mini-countdown-item {
+  text-align: center;
+}
+
+.mini-countdown-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e74c3c;
+}
+
+.mini-countdown-label {
+  font-size: 0.7rem;
+  color: #95a5a6;
+  text-transform: uppercase;
+}
+
+/* Card Actions */
+.card-actions,
+.birthday-actions,
+.form-actions,
+.action-buttons {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.edit-btn,
+.delete-btn,
+.org-edit-btn,
+.org-delete-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+.edit-btn,
+.org-edit-btn {
+  background-color: #3498db;
+}
+
+.delete-btn,
+.org-delete-btn {
+  background-color: #e74c3c;
+}
+
+.edit-btn:hover,
+.org-edit-btn:hover {
+  background-color: #2980b9;
+}
+
+.delete-btn:hover,
+.org-delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Organization Actions */
+.org-actions {
+  margin: 1rem 0 1.5rem;
+  display: flex;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+/* Dropdown Menu */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  min-width: 160px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  z-index: 1;
+  right: 0;
+}
+
+.dropdown-content a {
+  color: #2c3e50;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.dropdown-content a:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Action Menu */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-actions {
+  position: relative;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0 0.5rem;
+}
+
+.action-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #fff;
+  min-width: 120px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  z-index: 1;
+}
+
+.action-menu a {
+  color: #2c3e50;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  display: block;
+  font-size: 0.9rem;
+}
+
+.action-menu a:hover {
+  background-color: #f8f9fa;
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'birthday/css/import.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="import-container">
+    <h2>Import Birthdays from File</h2>
+    <p class="subtitle">Upload an Excel or CSV file with your organization's birthdays</p>
+    
+    <div class="file-upload-card">
+        <div class="instructions">
+            <h3>File Requirements:</h3>
+            <ul>
+                <li>Excel (.xlsx, .xls) or CSV format</li>
+                <li>Must contain columns: <strong>name</strong> and <strong>date_of_birth</strong></li>
+                <li>Date format: YYYY-MM-DD (e.g., 2002-05-25)</li>
+                <li>Max file size: 5MB</li>
+            </ul>
+            
+            <div class="sample-download">
+                <a href="{% static 'birthday/sample_birthdays.zip' %} " download class="download-btn">
+                    Download Sample File
+                </a>
+            </div> 
+        </div>
+        
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            
+            <div class="file-drop-area">
+                <div class="file-input-wrapper">
+                    {{ form.file }}
+                    <span class="file-msg">Choose file or drag here</span>
+                    <span class="file-name"></span>
+                </div>
+                {% if form.file.errors %}
+                <div class="error-message">
+                    {{ form.file.errors.as_text }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="submit-btn">Upload & Import</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('.file-input');
+    const fileName = document.querySelector('.file-name');
+    const fileMsg = document.querySelector('.file-msg');
+    
+    fileInput.addEventListener('change', function() {
+        if (this.files.length) {
+            fileName.textContent = this.files[0].name;
+            fileMsg.style.display = 'none';
+        } else {
+            fileName.textContent = '';
+            fileMsg.style.display = 'block';
+        }
+    });
+    
+    // Drag and drop functionality
+    const dropArea = document.querySelector('.file-drop-area');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        dropArea.classList.add('highlight');
+    }
+    
+    function unhighlight() {
+        dropArea.classList.remove('highlight');
+    }
+    
+    dropArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        
+        if (files.length) {
+            fileName.textContent = files[0].name;
+            fileMsg.style.display = 'none';
+        }
+        
+        // Trigger change event manually
+        const event = new Event('change');
+        fileInput.dispatchEvent(event);
+    }
+});
+</script>
+{% endblock %}

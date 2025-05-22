@@ -1,0 +1,29 @@
+<div class="birthday-card {% if birthday.countdown.days == 0 %}birthday-today{% endif %}" 
+     data-name="{{ birthday.full_name|lower }}"
+     data-countdown-date="{{ birthday.next_birthday|date:'Y-m-d' }}">
+    <div class="birthday-card-content">
+        <h5 class="birthday-name">{{ birthday.full_name }}</h5>
+        <p class="birthday-date">{{ birthday.date_of_birth|date:"F j" }}</p>
+        
+        {% if birthday.countdown.days == 0 %}
+            <p class="upcoming-info">🎉 Today's the day!</p>
+        {% else %}
+            <p class="upcoming-info">In {{ birthday.countdown.days }} days</p>
+        {% endif %}
+        
+        <div class="mini-countdown">
+            <div class="mini-countdown-item">
+                <div class="mini-countdown-value days">{{ birthday.countdown.days }}</div>
+                <div class="mini-countdown-label">DAYS</div>
+            </div>
+            <div class="mini-countdown-item">
+                <div class="mini-countdown-value hours">{{ birthday.countdown.hours }}</div>
+                <div class="mini-countdown-label">HRS</div>
+            </div>
+            <div class="mini-countdown-item">
+                <div class="mini-countdown-value mins">{{ birthday.countdown.minutes }}</div>
+                <div class="mini-countdown-label">MINS</div>
+            </div>
+        </div>
+    </div>
+</div>

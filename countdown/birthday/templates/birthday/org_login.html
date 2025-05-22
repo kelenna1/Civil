@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'birthday/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1 class="auth-title">Organization Login</h1>
+    
+    {% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_name" class="form-label">Organization Name</label>
+            {{ form.name }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password" class="form-label">Password</label>
+            {{ form.password }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    
+    <div class="auth-footer">
+        Don't have an organization yet? <a href="{% url 'create_organization' %}">Create one now</a>
+    </div>
+</div>
+{% endblock %}

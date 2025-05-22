@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'birthday/css/add_birthday.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="add-birthday-container">
+    <h1 class="add-birthday-title">Add Birthdays</h1>
+    
+    <div class="add-methods">
+        <!-- Manual Entry Form -->
+        <div class="manual-entry">
+            <h2 class="method-title">Add Single Birthday</h2>
+            <form method="post" class="birthday-form">
+                {% csrf_token %}
+                
+                <div class="birthday-form-group">
+                    <label for="id_full_name" class="birthday-form-label">Full Name</label>
+                    <input type="text" 
+                           name="full_name" 
+                           id="id_full_name" 
+                           class="birthday-form-input" 
+                           placeholder="Enter full name"
+                           required>
+                </div>
+                
+                <div class="birthday-form-group">
+                    <label for="id_date_of_birth" class="birthday-form-label">Date of Birth</label>
+                    <input type="date" 
+                           name="date_of_birth" 
+                           id="id_date_of_birth" 
+                           class="birthday-form-input"
+                           required>
+                </div>
+                
+                <button type="submit" class="submit-btn">Save Birthday</button>
+            </form>
+        </div>
+
+        <!-- Import Option -->
+        <div class="import-option">
+            <h2 class="method-title">Bulk Import</h2>
+            <div class="import-card">
+                <div class="import-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <p class="import-text">Import multiple birthdays from Excel or CSV file</p>
+                <a href="{% url 'import_birthdays' %}" class="import-btn">Import Birthdays</a>
+                <div class="sample-link">
+                    <a href="{% static 'birthday/sample_birthdays.xlsx' %}" download>Download sample file</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

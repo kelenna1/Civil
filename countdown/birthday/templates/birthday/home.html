@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'birthday/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="home-container">
+  <div class="hero-section">
+    <h1>Welcome to 🎂🎉CandlesDown</h1>
+    <p class="tagline">
+      This app helps organizations to track and celebrate birthdays effortlessly, 
+      ensuring that no special day is ever forgotten. Join us to make every 
+      birthday a memorable event!✨
+    </p>
+    
+    <div class="action-buttons">
+      <a href="{% url 'create_organization' %}" class="btn btn-primary">Create Organization</a>
+      <a href="{% url 'org_login' %}" class="btn btn-secondary">Login into Organization</a>
+    </div>
+  </div>
+  
+  <footer class="home-footer">
+    <p>&copy; {% now "Y" %} CandlesDown. All Rights Reserved.</p>
+  </footer>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'birthday/css/add_birthday.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="add-birthday-container">
+    <h1 class="add-birthday-title">Edit Birthday</h1>
+    
+    <form method="post" class="birthday-form">
+        {% csrf_token %}
+        
+        <div class="birthday-form-group">
+            <label for="id_full_name" class="birthday-form-label">Full Name</label>
+            {{ form.full_name }}
+        </div>
+        
+        <div class="birthday-form-group">
+            <label for="id_date_of_birth" class="birthday-form-label">Date of Birth</label>
+            {{ form.date_of_birth }}
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="submit-btn">Save Changes</button>
+            <a href="{% url 'delete_birthday' birthday.id %}" class="delete-btn">Delete Birthday</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

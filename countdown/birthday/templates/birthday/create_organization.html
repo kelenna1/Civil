@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'birthday/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1 class="auth-title">Get Started</h1>
+    <p class="auth-subtitle">Create your organization</p>
+    
+    {% if form.non_field_errors %}
+    <div class="error-message">
+        {% for error in form.non_field_errors %}
+            {{ error }}<br>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_name" class="form-label">Organization Name</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="field-error">{{ form.name.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password" class="form-label">Password</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="field-error">{{ form.password.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_confirm_password" class="form-label">Confirm Password</label>
+            {{ form.confirm_password }}
+            {% if form.confirm_password.errors %}
+                <div class="field-error">{{ form.confirm_password.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Create Organization</button>
+    </form>
+    
+    <div class="auth-footer">
+        Already have an organization? <a href="{% url 'org_login' %}">Login here</a>
+    </div>
+</div>
+{% endblock %}
