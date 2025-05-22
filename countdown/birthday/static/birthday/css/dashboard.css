@@ -331,3 +331,61 @@ body {
   50% { transform: scale(1.1); opacity: 0.7; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* Mobile responsiveness improvements */
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .next-birthday-card h4 {
+        font-size: 1.2rem;
+    }
+
+    .countdown,
+    .countdown-timer {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .countdown-value {
+        font-size: 1.5rem;
+    }
+
+    .countdown-label {
+        font-size: 0.65rem;
+    }
+
+    .search-add-section {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .search-input {
+        margin-right: 0;
+        width: 100%;
+    }
+
+    .add-button,
+    .import-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .birthdays-list {
+        grid-template-columns: 1fr;
+    }
+
+    .birthday-card {
+        padding: 1rem;
+    }
+
+    .birthday-name {
+        font-size: 1rem;
+    }
+
+    .birthday-date,
+    .upcoming-info {
+        font-size: 0.85rem;
+    }
+}
