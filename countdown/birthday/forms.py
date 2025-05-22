@@ -71,6 +71,12 @@ class BirthdayImportForm(forms.ModelForm):
                 'class': 'file-input'
             })
         }
+    def clean_file(self): 
+        file = self.cleaned_data['file']
+        if file.size > 5*1024*1024:  # 5MB limit
+            raise forms.ValidationError("File too large (max 5MB)")
+        return file
+    
 
 
 class OrganizationEditForm(forms.ModelForm):

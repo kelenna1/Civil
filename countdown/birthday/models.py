@@ -43,7 +43,7 @@ class BirthdayImport(models.Model):
     file = models.FileField(upload_to='birthday_imports/',
                           validators=[FileExtensionValidator(allowed_extensions=['xlsx', 'xls', 'csv'])])
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, default='pending')
+    status = models.CharField(max_length=255, default='pending')  # 'pending', 'success', 'error'
     processed = models.BooleanField(default=False)
 
     def __str__(self):

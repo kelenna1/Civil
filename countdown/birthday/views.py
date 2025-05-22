@@ -171,6 +171,7 @@ def import_birthdays(request):
         if form.is_valid():
             import_obj = form.save(commit=False)
             import_obj.organization_id = org_id
+            import_obj.status = "processing"  # Set initial status
             import_obj.save()
             
             try:
@@ -184,6 +185,9 @@ def import_birthdays(request):
                 required_columns = {'name', 'date_of_birth'}
                 if not required_columns.issubset(df.columns):
                     raise ValueError("File must contain 'name' and 'date_of_birth' columns")
+                
+                # Validate data lengths
+                df['name'] = df['name'].str[:100]  # Truncate to match model max_length
                 
                 # Create birthdays
                 birthdays = []
@@ -202,9 +206,11 @@ def import_birthdays(request):
                 return redirect('dashboard')
                 
             except Exception as e:
-                import_obj.status = f'error: {str(e)}'
+                # Truncate error message if too long
+                error_msg = str(e)
+                import_obj.status = f'error: {error_msg[:95]}'  # Keep within 100 chars
                 import_obj.save()
-                form.add_error('file', str(e))
+                form.add_error('file', error_msg)
     else:
         form = BirthdayImportForm()
 
