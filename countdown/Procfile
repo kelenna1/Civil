@@ -1,1 +1,1 @@
-web: gunicorn countdown.wsgi
+web: gunicorn countdown.countdown.wsgi:application
