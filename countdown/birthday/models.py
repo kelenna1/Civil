@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
+import uuid
 
 # Create your models here.
 class Organization(models.Model):
@@ -49,3 +50,18 @@ class BirthdayImport(models.Model):
     def __str__(self):
         return f"Import for {self.organization.name} ({self.uploaded_at})"
         
+
+class NotificationSubscription(models.Model):
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    email = models.EmailField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    unsubscribe_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    
+    class Meta:
+        unique_together = ('organization', 'email')
+        verbose_name = "Email Subscription"
+        verbose_name_plural = "Email Subscriptions"
+
+    def __str__(self):
+        return f"{self.email} ({'active' if self.is_active else 'inactive'})"

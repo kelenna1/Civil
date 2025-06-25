@@ -1,6 +1,7 @@
 from django import forms
 from .models import Organization, Birthday, BirthdayImport
 from django.contrib.auth.hashers import make_password
+from django.core.validators import validate_email
 
 class OrganizationLoginForm(forms.Form):
     name = forms.CharField(
@@ -83,3 +84,18 @@ class OrganizationEditForm(forms.ModelForm):
     class Meta:
         model = Organization
         fields = ['name']
+
+
+# forms.py
+class NotificationSubscriptionForm(forms.Form):
+    email = forms.EmailField(
+        label='Email Address',
+        widget=forms.EmailInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'your@email.com'
+        }),
+        validators=[validate_email]
+    )
+    
+    def clean_email(self):
+        return self.cleaned_data['email'].strip().lower()

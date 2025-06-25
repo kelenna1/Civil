@@ -21,49 +21,59 @@
   </div>
 
   <!-- Next Birthday Section -->
-  <!-- Next Birthday Section -->
-<div class="next-birthday-section">
-  {% if next_birthday %}
-    <h3>Next Birthday</h3>
-    <div class="next-birthday-card">
-      <div class="card-header">
-        <h4>{{ next_birthday.full_name }}🎉</h4>
-        <div class="card-actions">
-          <button class="action-btn" onclick="toggleActions(this)">⋮</button>
-          <div class="action-menu">
-            <a href="{% url 'edit_birthday' next_birthday.id %}">Edit</a>
-            <a href="{% url 'delete_birthday' next_birthday.id %}" onclick="return confirm('Delete this birthday?');">Delete</a>
+  <div class="next-birthday-section">
+    {% if next_birthday %}
+      <h3>Next Birthday</h3>
+      <div class="next-birthday-card">
+        <div class="card-header">
+          <h4>{{ next_birthday.full_name }}🎉</h4>
+          <div class="card-actions">
+            <button class="action-btn" onclick="toggleActions(this)">⋮</button>
+            <div class="action-menu">
+              <a href="{% url 'edit_birthday' next_birthday.id %}">Edit</a>
+              <a href="{% url 'delete_birthday' next_birthday.id %}" onclick="return confirm('Delete this birthday?');">Delete</a>
+            </div>
+          </div>
+        </div>
+        <p>{{ next_birthday.next_birthday|date:"F j" }} (Turning {{ next_birthday.turning }})</p>
+        
+        <!-- Main Countdown -->
+        <div class="countdown-timer" data-countdown-date="{{ next_birthday.next_birthday|date:'Y-m-d' }}">
+          <div class="countdown-item">
+            <span class="countdown-value days">--</span>
+            <span class="countdown-label">DAYS</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-value hours">--</span>
+            <span class="countdown-label">HRS</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-value minutes">--</span>
+            <span class="countdown-label">MINS</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-value seconds">--</span>
+            <span class="countdown-label">SECS</span>
           </div>
         </div>
       </div>
-      <p>{{ next_birthday.next_birthday|date:"F j" }} (Turning {{ next_birthday.turning }})</p>
-      
-      <!-- Main Countdown -->
-      <div class="countdown-timer" data-countdown-date="{{ next_birthday.next_birthday|date:'Y-m-d' }}">
-        <div class="countdown-item">
-          <span class="countdown-value days">--</span>
-          <span class="countdown-label">DAYS</span>
-        </div>
-        <div class="countdown-item">
-          <span class="countdown-value hours">--</span>
-          <span class="countdown-label">HRS</span>
-        </div>
-        <div class="countdown-item">
-          <span class="countdown-value minutes">--</span>
-          <span class="countdown-label">MINS</span>
-        </div>
-        <div class="countdown-item">
-          <span class="countdown-value seconds">--</span>
-          <span class="countdown-label">SECS</span>
-        </div>
-      </div>
-    </div>
-  {% else %}
-    <p>No upcoming birthdays found.</p>
-  {% endif %}
-</div>
+    {% else %}
+      <p>No upcoming birthdays found.</p>
+    {% endif %}
+  </div>
 
-<!-- Search and Add Section -->
+  <!-- Email Notifications Section -->
+  <div class="notification-section">
+      <h3>Email Notifications</h3>
+      <div class="notification-card">
+          <p>Get reminders for upcoming birthdays</p>
+          <a href="{% url 'notification_settings' %}" class="btn btn-notify">
+              ✉️ Manage Notifications
+          </a>
+      </div>
+  </div>
+
+  <!-- Search and Add Section -->
   <div class="search-add-section">
     <input type="text" id="searchInput" placeholder="Search by name..." class="search-input">
     <div class="action-buttons">
@@ -72,47 +82,48 @@
     </div>
   </div>
 
-<!-- All Birthdays Section -->
-<div class="all-birthdays-section">
-  <h3>All Birthdays</h3>
-  <div class="birthdays-list">
-    {% for birthday in birthdays %}
-      <div class="birthday-card" data-countdown-date="{{ birthday.next_birthday|date:'Y-m-d' }}">
-        <div class="card-header">
-          <h5>{{ birthday.full_name }}🎂</h5>
-          <div class="card-actions">
-            <button class="action-btn" onclick="toggleActions(this)">⋮</button>
-            <div class="action-menu">
-              <a href="{% url 'edit_birthday' birthday.id %}">Edit</a>
-              <a href="{% url 'delete_birthday' birthday.id %}" onclick="return confirm('Delete this birthday?');">Delete</a>
+  <!-- All Birthdays Section -->
+  <div class="all-birthdays-section">
+    <h3>All Birthdays</h3>
+    <div class="birthdays-list">
+      {% for birthday in birthdays %}
+        <div class="birthday-card" data-countdown-date="{{ birthday.next_birthday|date:'Y-m-d' }}">
+          <div class="card-header">
+            <h5>{{ birthday.full_name }}🎂</h5>
+            <div class="card-actions">
+              <button class="action-btn" onclick="toggleActions(this)">⋮</button>
+              <div class="action-menu">
+                <a href="{% url 'edit_birthday' birthday.id %}">Edit</a>
+                <a href="{% url 'delete_birthday' birthday.id %}" onclick="return confirm('Delete this birthday?');">Delete</a>
+              </div>
             </div>
           </div>
-        </div>
-        <p>{{ birthday.date_of_birth|date:"F j" }}</p>
-        
-        <!-- Mini Countdown -->
-        <div class="mini-countdown">
-          <div class="mini-countdown-item">
-            <span class="mini-countdown-value days">--</span>
-            <span class="mini-countdown-label">DAYS</span>
+          <p>{{ birthday.date_of_birth|date:"F j" }}</p>
+          
+          <!-- Mini Countdown -->
+          <div class="mini-countdown">
+            <div class="mini-countdown-item">
+              <span class="mini-countdown-value days">--</span>
+              <span class="mini-countdown-label">DAYS</span>
+            </div>
+            <div class="mini-countdown-item">
+              <span class="mini-countdown-value hours">--</span>
+              <span class="mini-countdown-label">HRS</span>
+            </div>
           </div>
-          <div class="mini-countdown-item">
-            <span class="mini-countdown-value hours">--</span>
-            <span class="mini-countdown-label">HRS</span>
-          </div>
+          
+          <p class="upcoming-info">
+            {% if birthday.countdown.days == 0 %}
+              🎉 Today's the day!
+            {% else %}
+              In {{ birthday.countdown.days }} days
+            {% endif %}
+          </p>
         </div>
-        
-        <p class="upcoming-info">
-          {% if birthday.countdown.days == 0 %}
-            🎉 Today's the day!
-          {% else %}
-            In {{ birthday.countdown.days }} days
-          {% endif %}
-        </p>
-      </div>
-    {% empty %}
-      <p class="no-birthdays">No birthdays yet.</p>
-    {% endfor %}
+      {% empty %}
+        <p class="no-birthdays">No birthdays yet.</p>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}
@@ -130,7 +141,7 @@
         if (otherMenu !== menu) otherMenu.style.display = 'none';
       });
     }
-    
+
     // Close menus when clicking elsewhere
     document.addEventListener('click', function(e) {
       if (!e.target.closest('.card-actions')) {

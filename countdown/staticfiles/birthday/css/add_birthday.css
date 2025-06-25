@@ -197,3 +197,47 @@
         font-size: 1.2rem;
     }
 }
+
+/* Mobile responsiveness improvements */
+@media (max-width: 480px) {
+    .add-birthday-container {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+
+    .add-birthday-title {
+        font-size: 1.3rem;
+    }
+
+    .birthday-form-input {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .submit-btn {
+        font-size: 0.95rem;
+        padding: 0.8rem;
+    }
+
+    .add-methods {
+        gap: 1.2rem;
+    }
+
+    .manual-entry,
+    .import-option {
+        padding: 1.2rem;
+    }
+
+    .import-text {
+        font-size: 0.95rem;
+    }
+
+    .import-btn {
+        font-size: 0.95rem;
+        padding: 0.7rem 1rem;
+    }
+
+    .sample-link {
+        font-size: 0.85rem;
+    }
+}

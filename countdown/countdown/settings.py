@@ -27,9 +27,16 @@ SECRET_KEY = config('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+# ALLOWED_HOSTS should include your domain and localhost for development
 
 ALLOWED_HOSTS = ['candlesdown.onrender.com','127.0.0.1']
+
+# Custom error handlers
+handler400 = 'yourapp.views.custom_bad_request_view'  # Optional
+handler403 = 'yourapp.views.custom_permission_denied_view'  # Optional
+handler404 = 'youapp.views.custom_page_not_found_view'  # Optional
+handler500 = 'yourapp.views.custom_error_view'  # Required for 500 errors
 
 
 # Application definition
@@ -42,8 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'birthday',  # Custom app for handling birthdays
+    'django.contrib.sites',  
 
 ]
+
+SITE_ID = 1  # Add this line to set the default site ID
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -128,3 +138,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email settings    
+# settings.py
+RESEND_API_KEY = config('RESEND_API_KEY')  # Your Resend API key
+RESEND_FROM_EMAIL = 'notifications@kdev.name.ng'  # Change to your domain later
+DEFAULT_FROM_EMAIL = RESEND_FROM_EMAIL
+
+# Railway HTTPS fix
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Optional for local Railway testing
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False

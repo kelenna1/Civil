@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'birthday/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1 class="auth-title">Birthday Notifications</h1>
+    <p class="auth-subtitle">Get notified when birthdays are happening in {{ organization.name }}</p>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="notification-features">
+        <div class="feature">
+            <div class="feature-icon">🎂</div>
+            <h3>Today's Birthdays</h3>
+            <p>Get notified immediately when it's someone's birthday</p>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon">📅</div>
+            <h3>Upcoming Reminders</h3>
+            <p>See who has birthdays coming up in the next few days</p>
+        </div>
+    </div>
+    
+    <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_email" class="form-label">Your Email Address</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="error-message">{{ form.email.errors.as_text }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Subscribe to Notifications</button>
+    </form>
+    
+    <div class="auth-footer">
+        <p><b>First time emails might get sent to spam, check your spam for confirmation and check it as safe</b></p>
+        <p>We'll only send notifications about birthdays in {{ organization.name }}.</p>
+        <p>You can unsubscribe anytime via the link in our emails.</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,14 +1,29 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseForbidden
-from .models import Organization, Birthday, BirthdayImport
-from .forms import OrganizationLoginForm, OrganizationCreateForm, BirthdayForm, BirthdayImportForm, OrganizationEditForm
-from datetime import datetime, timedelta
+from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.conf import settings
+from django.core.mail import send_mail
+from django.contrib import messages
+from datetime import datetime, timedelta
 import pandas as pd
+from .models import Organization, Birthday, BirthdayImport, NotificationSubscription
+from .forms import (
+    OrganizationLoginForm, 
+    OrganizationCreateForm, 
+    BirthdayForm, 
+    BirthdayImportForm, 
+    OrganizationEditForm,
+    NotificationSubscriptionForm
+)
+from .services import send_birthday_notification, send_welcome_email
+
+
+
 def home(request):  
     return render(request, 'birthday/home.html')
+
 
 def org_login(request):
     error = None
@@ -20,7 +35,8 @@ def org_login(request):
             try:
                 org = Organization.objects.get(name=org_name)
                 if org.check_password(password):
-                    request.session['org_id'] = org.id  # ✅ FIXED: no more login(request, org)
+                    request.session['org_id'] = org.id
+                    messages.success(request, "Logged in successfully!")
                     return redirect('dashboard')
                 else:
                     error = "Invalid password"
@@ -41,11 +57,9 @@ def dashboard(request):
         birthdays = org.birthdays.filter(is_active=True)
         upcoming_birthdays = get_upcoming_birthdays(birthdays)
         
-        # Ensure we're passing a birthday object with an ID
         next_birthday = None
         if upcoming_birthdays:
             next_birthday = upcoming_birthdays[0]
-            # If we're using a dictionary, make sure it has an 'id' key
             if isinstance(next_birthday, dict) and 'id' not in next_birthday:
                 next_birthday = None
         
@@ -59,6 +73,7 @@ def dashboard(request):
     except Organization.DoesNotExist:
         return HttpResponseForbidden("Organization not found")
 
+
 def create_organization(request):
     if request.method == 'POST':
         form = OrganizationCreateForm(request.POST)
@@ -66,6 +81,7 @@ def create_organization(request):
             try:
                 org = form.save()
                 request.session['org_id'] = org.id
+                messages.success(request, "Organization created successfully!")
                 return redirect('dashboard')
             except ValidationError as e:
                 form.add_error(None, e)
@@ -77,21 +93,17 @@ def create_organization(request):
         'errors': form.errors if form.errors else None
     })
 
-# def org_logout(request):
-#     # Clear the organization session
-#     if 'org_id' in request.session:
-#         del request.session['org_id']
-
 
 def org_logout(request):
     try:
         del request.session['org_id']
+        messages.success(request, "Logged out successfully!")
     except KeyError:
         pass
     return redirect('org_login')
 
+
 def calculate_next_birthday(birth_date):
-   
     today = datetime.today().date()
     this_year_birthday = birth_date.replace(year=today.year)
 
@@ -104,10 +116,11 @@ def calculate_next_birthday(birth_date):
     return {
         'date': next_birthday,
         'days': delta.days,
-        'hours': 0,  # optional: can enhance with JS for live clock
+        'hours': 0,
         'minutes': 0,
         'seconds': 0
     }
+
 
 def get_upcoming_birthdays(birthdays):
     today = datetime.today().date()
@@ -129,7 +142,7 @@ def get_upcoming_birthdays(birthdays):
         seconds = int(total_seconds % 60)
         
         upcoming.append({
-            'id': b.id,  # Add this line to include the birthday ID
+            'id': b.id,
             'full_name': b.full_name,
             'birth_date': birth_date,
             'next_birthday': next_birthday,
@@ -144,6 +157,7 @@ def get_upcoming_birthdays(birthdays):
     
     return sorted(upcoming, key=lambda x: x['countdown']['days'])
 
+
 def add_birthday(request):
     org_id = request.session.get('org_id')
     if not org_id:
@@ -155,11 +169,13 @@ def add_birthday(request):
             birthday = form.save(commit=False)
             birthday.organization_id = org_id
             birthday.save()
+            messages.success(request, "Birthday added successfully!")
             return redirect('dashboard')
     else:
         form = BirthdayForm()
 
     return render(request, 'birthday/add_birthday.html', {'form': form})
+
 
 def import_birthdays(request):
     org_id = request.session.get('org_id')
@@ -171,25 +187,21 @@ def import_birthdays(request):
         if form.is_valid():
             import_obj = form.save(commit=False)
             import_obj.organization_id = org_id
-            import_obj.status = "processing"  # Set initial status
+            import_obj.status = "processing"
             import_obj.save()
             
             try:
-                # Process the file
                 if import_obj.file.name.endswith('.csv'):
                     df = pd.read_csv(import_obj.file)
-                else:  # Excel file
+                else:
                     df = pd.read_excel(import_obj.file)
                 
-                # Validate and process data
                 required_columns = {'name', 'date_of_birth'}
                 if not required_columns.issubset(df.columns):
                     raise ValueError("File must contain 'name' and 'date_of_birth' columns")
                 
-                # Validate data lengths
-                df['name'] = df['name'].str[:100]  # Truncate to match model max_length
+                df['name'] = df['name'].str[:100]
                 
-                # Create birthdays
                 birthdays = []
                 for _, row in df.iterrows():
                     birthdays.append(Birthday(
@@ -203,13 +215,14 @@ def import_birthdays(request):
                 import_obj.processed = True
                 import_obj.save()
                 
+                messages.success(request, f"Successfully imported {len(birthdays)} birthdays!")
                 return redirect('dashboard')
                 
             except Exception as e:
-                # Truncate error message if too long
                 error_msg = str(e)
-                import_obj.status = f'error: {error_msg[:95]}'  # Keep within 100 chars
+                import_obj.status = f'error: {error_msg[:95]}'
                 import_obj.save()
+                messages.error(request, f"Import failed: {error_msg}")
                 form.add_error('file', error_msg)
     else:
         form = BirthdayImportForm()
@@ -218,10 +231,8 @@ def import_birthdays(request):
         'form': form,
         'organization': Organization.objects.get(id=org_id)
     })
-    
-from django.shortcuts import get_object_or_404
 
-# Edit Birthday
+
 def edit_birthday(request, birthday_id):
     org_id = request.session.get('org_id')
     if not org_id:
@@ -233,6 +244,7 @@ def edit_birthday(request, birthday_id):
         form = BirthdayForm(request.POST, instance=birthday)
         if form.is_valid():
             form.save()
+            messages.success(request, "Birthday updated successfully!")
             return redirect('dashboard')
     else:
         form = BirthdayForm(instance=birthday)
@@ -242,7 +254,7 @@ def edit_birthday(request, birthday_id):
         'birthday': birthday
     })
 
-# Delete Birthday (soft delete)
+
 def delete_birthday(request, birthday_id):
     org_id = request.session.get('org_id')
     if not org_id:
@@ -251,9 +263,10 @@ def delete_birthday(request, birthday_id):
     birthday = get_object_or_404(Birthday, id=birthday_id, organization_id=org_id)
     birthday.is_active = False
     birthday.save()
+    messages.success(request, "Birthday deleted successfully!")
     return redirect('dashboard')
 
-# Edit Organization
+
 def edit_organization(request):
     org_id = request.session.get('org_id')
     if not org_id:
@@ -265,6 +278,7 @@ def edit_organization(request):
         form = OrganizationEditForm(request.POST, instance=org)
         if form.is_valid():
             form.save()
+            messages.success(request, "Organization details updated successfully!")
             return redirect('dashboard')
     else:
         form = OrganizationEditForm(instance=org)
@@ -274,7 +288,7 @@ def edit_organization(request):
         'organization': org
     })
 
-# Delete Organization (soft delete)
+
 def delete_organization(request):
     org_id = request.session.get('org_id')
     if not org_id:
@@ -282,14 +296,63 @@ def delete_organization(request):
 
     org = get_object_or_404(Organization, id=org_id)
 
-    # Optional: Cascade delete related birthdays & imports using transaction
     with transaction.atomic():
-        # Delete related data manually if not using on_delete=CASCADE in models
         Birthday.objects.filter(organization=org).delete()
         BirthdayImport.objects.filter(organization=org).delete()
-        org.delete()  # 🚨 Hard delete from database
+        org.delete()
 
-    # Clear session
     request.session.pop('org_id', None)
-
+    messages.success(request, "Organization deleted successfully!")
     return redirect('home')
+
+
+def notification_settings(request):
+    org_id = request.session.get('org_id')
+    if not org_id:
+        return redirect('org_login')
+    
+    org = get_object_or_404(Organization, id=org_id)
+    
+    if request.method == 'POST':
+        form = NotificationSubscriptionForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email'].lower()
+            
+            subscription, created = NotificationSubscription.objects.update_or_create(
+                organization=org,
+                email=email,
+                defaults={'is_active': True}
+            )
+            
+            send_welcome_email(subscription)
+            
+            messages.success(request, "You're subscribed! Check your email for confirmation.")
+            return redirect('dashboard')
+    else:
+        form = NotificationSubscriptionForm()
+    
+    return render(request, 'birthday/notification_settings.html', {
+        'form': form,
+        'organization': org
+    })
+
+
+def unsubscribe(request, token):
+    subscription = get_object_or_404(NotificationSubscription, unsubscribe_token=token)
+    subscription.is_active = False
+    subscription.save()
+    messages.success(request, "You've been unsubscribed from notifications.")
+    return render(request, 'birthday/unsubscribe_success.html')
+
+
+def custom_error_view(request, exception=None):
+    return render(request, '500.html', status=500)
+
+def custom_page_not_found_view(request, exception):
+    return render(request, '404.html', status=404)
+
+def custom_permission_denied_view(request, exception):
+    return render(request, '403.html', status=403)
+
+def custom_bad_request_view(request, exception):
+    return render(request, '400.html', status=400)

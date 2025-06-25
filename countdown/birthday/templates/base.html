@@ -25,6 +25,17 @@
     </div>
   </header>
 
+  {% if messages %}
+  <div class="toast-container">
+    {% for message in messages %}
+      <div class="toast toast-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+
   <main class="container">
     <div class="content-container">
     {% block content %}{% endblock %}
@@ -33,4 +44,13 @@
 
   {% block extra_js %}{% endblock %}
 </body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      const toasts = document.querySelectorAll(".toast");
+      setTimeout(() => {
+          toasts.forEach(toast => toast.remove());
+      }, 6000); // 1.5 seconds
+  });
+</script>
+
 </html>
