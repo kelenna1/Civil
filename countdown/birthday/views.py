@@ -342,7 +342,7 @@ def unsubscribe(request, token):
     subscription.is_active = False
     subscription.save()
     messages.success(request, "You've been unsubscribed from notifications.")
-    return render(request, 'birthday/unsubscribe_success.html')
+    return render(request, 'birthday/dashboard.html')
 
 
 def custom_error_view(request, exception=None):
