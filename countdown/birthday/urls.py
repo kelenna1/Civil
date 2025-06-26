@@ -20,7 +20,3 @@ urlpatterns = [
 ]
 
 
-handler404 = views.custom_page_not_found_view
-handler500 = views.custom_error_view
-handler403 = views.custom_permission_denied_view
-handler400 = views.custom_bad_request_view
