@@ -32,6 +32,12 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['candlesdown.onrender.com','127.0.0.1']
 
+# Custom error handlers
+handler400 = 'birthday.views.custom_bad_request_view'  # Optional
+handler403 = 'birthday.views.custom_permission_denied_view'  # Optional
+handler404 = 'birthday.views.custom_page_not_found_view'  # Optional
+handler500 = 'birthday.views.custom_error_view'  # Required for 500 errors
+
 
 
 # Application definition
