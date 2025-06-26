@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from birthday import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('birthday.urls')),  # Include the birthday app URLs
 ]
+
+handler404 = views.custom_page_not_found_view
+handler500 = views.custom_error_view
+handler403 = views.custom_permission_denied_view
+handler400 = views.custom_bad_request_view
