@@ -6,7 +6,7 @@
         <p class="birthday-date">{{ birthday.date_of_birth|date:"F j" }}</p>
         
         {% if birthday.countdown.days == 0 %}
-            <p class="upcoming-info">🎉 Today's the day!</p>
+            <p class="upcoming-info">Today</p>
         {% else %}
             <p class="upcoming-info">In {{ birthday.countdown.days }} days</p>
         {% endif %}

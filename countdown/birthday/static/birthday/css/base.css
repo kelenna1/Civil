@@ -8,44 +8,51 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  background-image: url('/static/birthday/images/non.jpg');
-  /* background-size: cover; */
-  background-position: center;
-  background-attachment: fixed;
-  color: #f1f1f1;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #f8fafc 0%, #f1f5f9 100%);
+  color: #0f172a;
 }
 
 /* Links */
 a {
   text-decoration: none;
-  color: #9dc4eb;
+  color: #2563eb;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #00aaff;
+  color: #1d4ed8;
 }
 
 /* Layout Container */
 .container {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 1.25rem 1.5rem;
 }
 
 /* Header Styles */
 header {
-  /* background-color: rgba(255, 3, 3, 0.6); */
-  box-shadow: 0 2px 4px rgba(249, 210, 210, 0.05);
-  padding: 20px 0;
-  margin-bottom: 30px;
-  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(10px);
+  background: rgba(248, 250, 252, 0.8);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #ffcc00;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.01em;
 }
 
 .logo a {
@@ -53,44 +60,49 @@ header {
 }
 
 nav {
-  margin-top: 10px;
+  margin-top: 0;
 }
 
 .nav-links {
   list-style: none;
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  align-items: center;
+  gap: 1rem;
   padding-left: 0;
 }
 
 .nav-links li a {
   font-weight: 500;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: #334155;
+  border: 1px solid transparent;
 }
 
 .nav-links li a:hover {
-  background-color: #0077cc;
-  color: #fff;
+  background-color: rgba(37, 99, 235, 0.06);
+  border-color: rgba(37, 99, 235, 0.25);
+  color: #1d4ed8;
 }
 
 /* Main Content */
 main {
   display: flex;
   justify-content: center;
-  padding: 2rem;
+  padding: 2.25rem 1.5rem 2.75rem;
 }
 
 .content-container {
-  background-color: rgba(255, 255, 255, 0.87); /* soft, off-white */
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 1100px;
+  background-color: #f9fafb;
+  border-radius: 18px;
+  padding: 2.25rem 2rem;
+  max-width: 1120px;
   width: 100%;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(6px); /* optional glassy effect */
-  color: #222; /* for contrast inside the white card */
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.10),
+    0 0 0 1px rgba(15, 23, 42, 0.06);
+  color: #111827;
 }
 
 .toast-container {

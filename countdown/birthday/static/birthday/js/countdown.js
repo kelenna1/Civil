@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isMain) {
           container.classList.add('birthday-today');
           const infoEl = container.querySelector('.upcoming-info');
-          if (infoEl) infoEl.textContent = "🎉 Today's the day!";
+          if (infoEl) infoEl.textContent = "Today";
         }
         setValue(daysEl, '0');
         setValue(hoursEl, '0');

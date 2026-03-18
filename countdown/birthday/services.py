@@ -36,7 +36,7 @@ def send_birthday_notification(subscription, todays_birthdays, upcoming_birthday
         </style>
     </head>
     <body>
-        <h1 class="header">🎉 Birthday Alert</h1>
+        <h1 class="header">Birthday Alert</h1>
     """
     
     # Today's Birthdays Section (Primary Focus)
@@ -48,7 +48,7 @@ def send_birthday_notification(subscription, todays_birthdays, upcoming_birthday
                 f'<div class="birthday-item today-item">'
                 f'<span class="birthday-name">{b["name"]}</span> '
                 f'<span class="today-badge">TODAY</span>'
-                f'<div style="margin-top: 8px;">🎂 Wishing {b["name"].split()[0]} a wonderful birthday!</div>'
+                f'<div style="margin-top: 8px;">Wishing {b["name"].split()[0]} a wonderful birthday!</div>'
                 f'</div>'
                 for b in todays_birthdays
             )}
@@ -91,7 +91,7 @@ def send_birthday_notification(subscription, todays_birthdays, upcoming_birthday
     # Dynamic subject line
     if todays_birthdays:
         names = ", ".join(b['name'] for b in todays_birthdays[:2])
-        subject = f"🎂 Today's Birthdays: {names}" + (" and more!" if len(todays_birthdays) > 2 else "")
+        subject = f"Today's Birthdays: {names}" + (" and more!" if len(todays_birthdays) > 2 else "")
     elif upcoming_birthdays:
         subject = f"Upcoming Birthdays in {org_name}"
     else:
@@ -127,7 +127,7 @@ def send_welcome_email(subscription):
         </style>
     </head>
     <body>
-        <h1 class="header">🎉 Welcome to Birthday Notifications!</h1>
+        <h1 class="header">Welcome to Birthday Notifications!</h1>
         <div class="message-section">
             <p>Thanks for subscribing to <strong>{org_name}</strong>'s birthday alerts!</p>
             <p>You'll receive timely emails whenever someone’s birthday is today or coming up soon.</p>
@@ -147,7 +147,7 @@ def send_welcome_email(subscription):
         resend.Emails.send({
             "from": f"CandlesDown <{settings.RESEND_FROM_EMAIL}>",
             "to": [subscription.email],
-            "subject": "🎉 You're Subscribed to Birthday Alerts!",
+            "subject": "You're Subscribed to Birthday Alerts!",
             "html": html_content
         })
         return True
