@@ -1,0 +1,78 @@
+/* =============================================================================
+   Auth Pages — Login / Register / Edit Organization
+   ============================================================================= */
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height));
+  padding: var(--space-8) var(--space-6);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  animation: auth-in 0.5s var(--ease-out);
+}
+
+@keyframes auth-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.auth-card__header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.auth-card__icon {
+  font-size: var(--text-4xl);
+  margin-bottom: var(--space-4);
+  display: inline-block;
+}
+
+.auth-card__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: var(--tracking-tight);
+  margin-bottom: var(--space-2);
+}
+
+.auth-card__subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+/* ── Form ── */
+.auth-form {
+  margin-bottom: var(--space-8);
+}
+
+.auth-form .btn--primary {
+  width: 100%;
+  margin-top: var(--space-2);
+  padding: var(--space-4);
+  font-size: var(--text-base);
+}
+
+/* ── Footer Link ── */
+.auth-footer {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.auth-footer a {
+  color: var(--accent-light);
+  font-weight: 600;
+}
+.auth-footer a:hover {
+  color: var(--accent);
+}
+
+/* ── Alert within auth ── */
+.auth-card .alert {
+  margin-bottom: var(--space-6);
+}
