@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CandlesDown — Never Miss a Birthday{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+  <!-- Floating sparkle particles -->
+  <div class="hero__sparkles" aria-hidden="true">
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+    <div class="sparkle"></div>
+  </div>
+
+  <div class="hero__icon" aria-hidden="true">🕯️</div>
+
+  <h1 class="hero__title">
+    Never Miss<br>Another Birthday
+  </h1>
+
+  <p class="hero__subtitle">
+    Track, countdown, and celebrate every special day in your organization. Automatic notifications, live countdowns, all in one place.
+  </p>
+
+  <div class="hero__actions">
+    <a href="{% url 'create_organization' %}" class="btn btn--primary btn--lg">
+      Get Started Free
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="{% url 'org_login' %}" class="btn btn--secondary btn--lg">
+      Login to Organization
+    </a>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features">
+  <h2 class="features__title">Built for teams who care</h2>
+  <p class="features__subtitle">Everything you need to make every birthday special</p>
+
+  <div class="features__grid">
+    <div class="feature-card">
+      <div class="feature-card__icon">⏱️</div>
+      <h3 class="feature-card__title">Live Countdowns</h3>
+      <p class="feature-card__text">Real-time countdowns to every birthday in your organization, updating every second.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__icon">🔔</div>
+      <h3 class="feature-card__title">Email Notifications</h3>
+      <p class="feature-card__text">Subscribe to daily birthday alerts so you never miss a chance to wish someone well.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__icon">📁</div>
+      <h3 class="feature-card__title">Bulk Import</h3>
+      <p class="feature-card__text">Upload your entire team's birthdays at once from Excel or CSV with duplicate detection.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <div class="site-footer__brand">🕯 CandlesDown</div>
+      <p class="site-footer__tagline">Never forget another birthday. Track, celebrate, and make every special day count for your team.</p>
+    </div>
+    <div>
+      <div class="site-footer__heading">Product</div>
+      <ul class="site-footer__links">
+        <li><a href="{% url 'create_organization' %}">Get Started</a></li>
+        <li><a href="{% url 'org_login' %}">Login</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="site-footer__heading">Features</div>
+      <ul class="site-footer__links">
+        <li><a href="#">Live Countdowns</a></li>
+        <li><a href="#">Email Alerts</a></li>
+        <li><a href="#">Bulk Import</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="site-footer__bottom">
+    &copy; {% now "Y" %} CandlesDown. All rights reserved.
+  </div>
+</footer>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Birthday — CandlesDown{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card glass-card">
+    <div class="auth-card__header">
+      <div class="auth-card__icon">✏️</div>
+      <h1 class="auth-card__title">Edit Birthday</h1>
+      <p class="auth-card__subtitle">Update {{ birthday.full_name }}'s details</p>
+    </div>
+
+    <form method="post" class="auth-form" novalidate>
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="id_full_name" class="form-label">Full Name</label>
+        {{ form.full_name }}
+        {% if form.full_name.errors %}<div class="form-error">{{ form.full_name.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+        {{ form.date_of_birth }}
+        {% if form.date_of_birth.errors %}<div class="form-error">{{ form.date_of_birth.errors.0 }}</div>{% endif %}
+      </div>
+
+      <button type="submit" class="btn btn--primary btn--block">Save Changes</button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

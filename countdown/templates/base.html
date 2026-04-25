@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO -->
+  <title>{% block title %}CandlesDown{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}CandlesDown — Never miss another birthday. Track, countdown, and celebrate your organization's special days.{% endblock %}">
+  <meta name="theme-color" content="#f59e0b">
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{% block og_title %}CandlesDown — Never Miss a Birthday{% endblock %}">
+  <meta property="og:description" content="Track, countdown, and celebrate every special day in your organization. Automatic notifications, live countdowns, all in one place.">
+  <meta property="og:image" content="{% static 'img/favicon.png' %}">
+  <meta property="og:site_name" content="CandlesDown">
+
+  <!-- PWA -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="{% static 'img/favicon.png' %}">
+
+  <!-- Design System -->
+  <link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  {% block extra_css %}{% endblock %}
+
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="mesh-bg" aria-hidden="true">
+    <div class="mesh-bg__orb mesh-bg__orb--amber"></div>
+    <div class="mesh-bg__orb mesh-bg__orb--violet"></div>
+    <div class="mesh-bg__orb mesh-bg__orb--blue"></div>
+  </div>
+
+  <!-- Skip to main -->
+  <a href="#main-content" class="sr-only sr-only--focusable">Skip to main content</a>
+
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header__inner">
+      <div class="header__logo"><a href="{% url 'home' %}" aria-label="CandlesDown home">🕯 CandlesDown</a></div>
+
+      <nav class="header__nav" role="navigation" aria-label="Main navigation">
+        {% if request.organization %}
+          <a href="{% url 'dashboard' %}" class="header__link" aria-label="Dashboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+          </a>
+          <a href="{% url 'add_birthday' %}" class="header__link header__link--accent" aria-label="Add birthday">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add
+          </a>
+          <a href="{% url 'org_logout' %}" class="header__link">Logout</a>
+        {% else %}
+          <a href="{% url 'org_login' %}" class="header__link">Login</a>
+          <a href="{% url 'create_organization' %}" class="btn btn--primary btn--sm">Get Started</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <!-- Toasts -->
+  {% if messages %}
+  <div class="toast-container" role="status" aria-live="polite">
+    {% for message in messages %}
+      <div class="toast toast-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Main -->
+  <main class="main" id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

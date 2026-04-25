@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}403 — Forbidden{% endblock %}
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - var(--header-height));padding:var(--space-8);">
+  <div style="text-align:center;">
+    <div style="font-size:6rem;font-weight:900;letter-spacing:-0.05em;color:var(--danger);line-height:1;">403</div>
+    <h2 style="font-size:var(--text-xl);font-weight:700;margin:var(--space-4) 0 var(--space-2);">Access Denied</h2>
+    <p style="color:var(--text-tertiary);margin-bottom:var(--space-8);">You don't have permission to access this page.</p>
+    <a href="{% url 'home' %}" class="btn btn--secondary">Go Home →</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard — {{ organization.name }} | CandlesDown{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="dashboard">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div>
+      <div class="dash-header__greeting">Welcome back to</div>
+      <h1 class="dash-header__org">{{ organization.name }}</h1>
+    </div>
+    <div style="display:flex;gap:var(--space-2);">
+      <div class="dropdown">
+        <button class="dropdown__trigger" title="Organization settings" aria-label="Organization settings">⚙️</button>
+        <div class="dropdown__menu">
+          <a href="{% url 'edit_organization' %}" class="dropdown__item">Edit Organization</a>
+          <a href="{% url 'notification_settings' %}" class="dropdown__item">Notification Settings</a>
+          <hr class="divider" style="margin:var(--space-2) 0;">
+          <form method="post" action="{% url 'delete_organization' %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="dropdown__item dropdown__item--danger" onclick="return confirm('⚠️ Delete this organization and ALL data? This cannot be undone.');">Delete Organization</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats (clickable) -->
+  <div class="stats-strip">
+    <div class="stat-card stat-card--accent" onclick="openModal('modalTotal')" role="button" tabindex="0" aria-label="View total birthdays">
+      <div class="stat-card__value">{{ stats.total }}</div>
+      <div class="stat-card__label">Total Birthdays</div>
+    </div>
+    <div class="stat-card stat-card--success" onclick="openModal('modalToday')" role="button" tabindex="0" aria-label="View today's celebrations">
+      <div class="stat-card__value">{{ stats.today }}</div>
+      <div class="stat-card__label">Celebrating Today 🎉</div>
+    </div>
+    <div class="stat-card stat-card--violet" onclick="openModal('modalMonth')" role="button" tabindex="0" aria-label="View this month's calendar">
+      <div class="stat-card__value">{{ stats.this_month }}</div>
+      <div class="stat-card__label">This Month 📅</div>
+    </div>
+  </div>
+
+  <!-- Hero Countdown — Next Birthday -->
+  {% if next_birthday %}
+  <div class="hero-countdown {% if next_birthday.is_today %}hero-countdown--today{% endif %}" data-hero-date="{{ next_birthday.next_birthday|date:'Y-m-d' }}">
+    <div class="hero-countdown__label">
+      {% if next_birthday.is_today %}🎉 Birthday Today{% else %}⏱️ Next Birthday{% endif %}
+    </div>
+    <div class="hero-countdown__name">{{ next_birthday.full_name }}</div>
+    <div class="hero-countdown__date">
+      {{ next_birthday.next_birthday|date:"l, F j" }} · Turning <span>{{ next_birthday.turning }}</span>
+    </div>
+
+    {% if next_birthday.is_today %}
+      <div style="display:flex;align-items:center;gap:var(--space-3);font-size:var(--text-xl);font-weight:700;color:var(--accent);">
+        🎂 Happy Birthday, {{ next_birthday.full_name }}! 🎉
+      </div>
+    {% else %}
+      <div class="countdown-display">
+        <div class="countdown-display__unit">
+          <div class="countdown-display__value" data-unit="days">{{ next_birthday.countdown.days|stringformat:"02d" }}</div>
+          <div class="countdown-display__label">Days</div>
+        </div>
+        <div class="countdown-display__unit">
+          <div class="countdown-display__value" data-unit="hours">{{ next_birthday.countdown.hours|stringformat:"02d" }}</div>
+          <div class="countdown-display__label">Hours</div>
+        </div>
+        <div class="countdown-display__unit">
+          <div class="countdown-display__value" data-unit="minutes">{{ next_birthday.countdown.minutes|stringformat:"02d" }}</div>
+          <div class="countdown-display__label">Minutes</div>
+        </div>
+        <div class="countdown-display__unit">
+          <div class="countdown-display__value" data-unit="seconds">--</div>
+          <div class="countdown-display__label">Seconds</div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Notification Banner -->
+  <div class="notify-banner">
+    <div class="notify-banner__text">
+      <strong>🔔 Stay notified</strong> — Get email alerts for upcoming birthdays
+    </div>
+    <a href="{% url 'notification_settings' %}" class="btn btn--secondary btn--sm">Manage Notifications</a>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="dash-toolbar">
+    <form method="get" action="{% url 'dashboard' %}" class="search-box">
+      <span class="search-box__icon">🔍</span>
+      <input type="text" name="q" value="{{ search_query }}" placeholder="Search birthdays..." class="search-box__input" autocomplete="off">
+    </form>
+    <a href="{% url 'add_birthday' %}" class="btn btn--primary btn--sm">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Birthday
+    </a>
+    <a href="{% url 'import_birthdays' %}" class="btn btn--secondary btn--sm">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import
+    </a>
+  </div>
+
+  <!-- All Birthdays -->
+  <div class="section-heading">
+    <h2 class="section-heading__title">All Birthdays</h2>
+    <div class="section-heading__line"></div>
+    <span class="badge badge--count">{{ stats.total }}</span>
+  </div>
+
+  <div class="birthday-grid">
+    {% for birthday in birthdays %}
+    <div class="birthday-card {% if birthday.is_today %}birthday-card--today{% endif %}" data-card-date="{{ birthday.next_birthday|date:'Y-m-d' }}">
+      <div class="birthday-card__top">
+        <div style="display:flex;align-items:center;gap:var(--space-3);">
+          <div class="birthday-card__avatar">{{ birthday.full_name|first }}</div>
+          <div>
+            <div class="birthday-card__name">{{ birthday.full_name }}</div>
+            <div class="birthday-card__date">{{ birthday.date_of_birth|date:"M j, Y" }}</div>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="dropdown__trigger" aria-label="Birthday options">⋮</button>
+          <div class="dropdown__menu">
+            <a href="{% url 'edit_birthday' birthday.id %}" class="dropdown__item">Edit</a>
+            <form method="post" action="{% url 'delete_birthday' birthday.id %}" style="margin:0;">
+              {% csrf_token %}
+              <button type="submit" class="dropdown__item dropdown__item--danger" onclick="return confirm('Remove this birthday?');">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {% if birthday.is_today %}
+        <div class="birthday-card__today-msg">
+          🎂 Happy Birthday! · Turning {{ birthday.turning }}
+        </div>
+      {% else %}
+        <div class="birthday-card__countdown">
+          <div class="birthday-card__unit">
+            <div class="birthday-card__value" data-unit="days">{{ birthday.countdown.days|stringformat:"02d" }}</div>
+            <div class="birthday-card__unit-label">Days</div>
+          </div>
+          <div class="birthday-card__unit">
+            <div class="birthday-card__value" data-unit="hours">{{ birthday.countdown.hours|stringformat:"02d" }}</div>
+            <div class="birthday-card__unit-label">Hrs</div>
+          </div>
+          <div class="birthday-card__unit">
+            <div class="birthday-card__value" data-unit="minutes">{{ birthday.countdown.minutes|stringformat:"02d" }}</div>
+            <div class="birthday-card__unit-label">Min</div>
+          </div>
+          <div class="birthday-card__unit">
+            <div class="birthday-card__value" data-unit="seconds">--</div>
+            <div class="birthday-card__unit-label">Sec</div>
+          </div>
+          <div style="flex:1;"></div>
+          {% if birthday.countdown.days <= 3 %}
+            <span class="badge badge--upcoming">{{ birthday.countdown.days }}d</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    {% empty %}
+      <div class="empty-state" style="grid-column:1/-1;">
+        <div class="empty-state__icon">🎂</div>
+        <h3 class="empty-state__title">No birthdays yet</h3>
+        <p class="empty-state__text">Start by adding your first birthday or importing from a file</p>
+        <a href="{% url 'add_birthday' %}" class="btn btn--primary">Add Your First Birthday</a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if birthdays.has_other_pages %}
+  <div class="pagination">
+    {% if birthdays.has_previous %}
+      <a href="?page={{ birthdays.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="pagination__btn">← Previous</a>
+    {% endif %}
+    <span class="pagination__info">Page {{ birthdays.number }} of {{ birthdays.paginator.num_pages }}</span>
+    {% if birthdays.has_next %}
+      <a href="?page={{ birthdays.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="pagination__btn">Next →</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: Today's Celebrations
+     ═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalToday">
+  <div class="modal-panel">
+    <div class="modal-panel__header">
+      <h2 class="modal-panel__title">🎉 Celebrating Today</h2>
+      <button class="modal-panel__close" onclick="closeModal('modalToday')" aria-label="Close">✕</button>
+    </div>
+    <div class="person-list">
+      {% for person in today_birthdays %}
+      <div class="person-list__item">
+        <div class="person-list__avatar">{{ person.full_name|first }}</div>
+        <div>
+          <div class="person-list__name">{{ person.full_name }}</div>
+          <div class="person-list__detail">Turning {{ person.turning }} today! 🎂</div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="person-list__empty">
+        <div style="font-size:var(--text-3xl);margin-bottom:var(--space-4);">😴</div>
+        No birthdays today — but keep celebrating!
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: This Month Calendar
+     ═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalMonth">
+  <div class="modal-panel">
+    <div class="modal-panel__header">
+      <h2 class="modal-panel__title">📅 {{ month_name }}</h2>
+      <button class="modal-panel__close" onclick="closeModal('modalMonth')" aria-label="Close">✕</button>
+    </div>
+    <div class="mini-cal" id="miniCal"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL: Total Birthdays
+     ═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalTotal">
+  <div class="modal-panel">
+    <div class="modal-panel__header">
+      <h2 class="modal-panel__title">📊 All Birthdays</h2>
+      <button class="modal-panel__close" onclick="closeModal('modalTotal')" aria-label="Close">✕</button>
+    </div>
+    <div style="text-align:center;padding:var(--space-6);">
+      <div style="font-size:var(--text-5xl);font-weight:900;color:var(--accent);margin-bottom:var(--space-2);">{{ stats.total }}</div>
+      <div style="color:var(--text-tertiary);font-size:var(--text-sm);">birthdays tracked in {{ organization.name }}</div>
+      <div style="margin-top:var(--space-6);display:flex;justify-content:center;gap:var(--space-4);">
+        <a href="{% url 'add_birthday' %}" class="btn btn--primary btn--sm">Add More</a>
+        <a href="{% url 'import_birthdays' %}" class="btn btn--secondary btn--sm">Import File</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Build mini calendar
+(function() {
+  var cal = document.getElementById('miniCal');
+  if (!cal) return;
+
+  var firstWeekday = {{ month_first_weekday }};
+  var numDays = {{ month_num_days }};
+  var todayDay = {{ today_day }};
+
+  var birthdays = {};
+  {% for day, names in month_days.items %}
+  birthdays[{{ day }}] = [{% for n in names %}"{{ n|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}];
+  {% endfor %}
+
+  var dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  dayNames.forEach(function(d) {
+    var el = document.createElement('div');
+    el.className = 'mini-cal__dayname';
+    el.textContent = d;
+    cal.appendChild(el);
+  });
+
+  for (var i = 0; i < firstWeekday; i++) {
+    var el = document.createElement('div');
+    el.className = 'mini-cal__day mini-cal__day--empty';
+    cal.appendChild(el);
+  }
+
+  for (var d = 1; d <= numDays; d++) {
+    var el = document.createElement('div');
+    var cls = 'mini-cal__day';
+    if (d === todayDay) cls += ' mini-cal__day--today';
+    if (birthdays[d]) cls += ' mini-cal__day--birthday';
+    el.className = cls;
+    el.innerHTML = '<span>' + d + '</span>';
+    if (birthdays[d]) {
+      el.innerHTML += '<div class="mini-cal__dot"></div>';
+      el.innerHTML += '<div class="mini-cal__names">' + birthdays[d].join(', ') + '</div>';
+      el.title = birthdays[d].join(', ');
+    }
+    cal.appendChild(el);
+  }
+})();
+</script>
+{% endblock %}

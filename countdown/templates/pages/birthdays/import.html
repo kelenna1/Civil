@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Import Birthdays — CandlesDown{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/auth.css' %}">
+<style>
+  .import-instructions {
+    background: var(--surface-1);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+  }
+  .import-instructions h3 {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+  }
+  .import-instructions ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .import-instructions li {
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+    padding-left: var(--space-5);
+    position: relative;
+  }
+  .import-instructions li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .file-drop {
+    border: 2px dashed var(--surface-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-10);
+    text-align: center;
+    transition: all var(--duration-fast) var(--ease-out);
+    cursor: pointer;
+    margin-bottom: var(--space-6);
+  }
+  .file-drop:hover, .file-drop.dragover {
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+  }
+  .file-drop__icon { font-size: var(--text-3xl); margin-bottom: var(--space-3); }
+  .file-drop__text { color: var(--text-tertiary); font-size: var(--text-sm); margin-bottom: var(--space-2); }
+  .file-drop__name { color: var(--accent-light); font-weight: 600; font-size: var(--text-sm); display: none; }
+  .file-drop input[type="file"] { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card glass-card" style="max-width:520px;">
+    <div class="auth-card__header">
+      <div class="auth-card__icon">📁</div>
+      <h1 class="auth-card__title">Import Birthdays</h1>
+      <p class="auth-card__subtitle">Upload from Excel or CSV</p>
+    </div>
+
+    <div class="import-instructions">
+      <h3>File Requirements</h3>
+      <ul>
+        <li>Excel (.xlsx, .xls) or CSV format</li>
+        <li>Columns: <strong>name</strong> and <strong>date_of_birth</strong></li>
+        <li>Date format: YYYY-MM-DD</li>
+        <li>Max file size: 5MB</li>
+        <li>Duplicates are automatically skipped</li>
+      </ul>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="auth-form" id="importForm">
+      {% csrf_token %}
+
+      <div class="file-drop" id="fileDrop" onclick="document.getElementById('id_file').click();">
+        <div class="file-drop__icon">📄</div>
+        <div class="file-drop__text">Click to browse or drag file here</div>
+        <div class="file-drop__name" id="fileName"></div>
+        {{ form.file }}
+      </div>
+
+      {% if form.file.errors %}
+      <div class="alert alert--error" style="margin-bottom:var(--space-4);">{{ form.file.errors.0 }}</div>
+      {% endif %}
+
+      <button type="submit" class="btn btn--primary btn--block">Upload & Import</button>
+    </form>
+
+    <div class="auth-footer" style="margin-top:var(--space-6);">
+      <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const drop = document.getElementById('fileDrop');
+  const fileInput = document.getElementById('id_file');
+  const fileName = document.getElementById('fileName');
+  const fileText = drop.querySelector('.file-drop__text');
+
+  if (fileInput) {
+    fileInput.addEventListener('change', function() {
+      if (this.files.length) {
+        fileName.textContent = '📎 ' + this.files[0].name;
+        fileName.style.display = 'block';
+        fileText.style.display = 'none';
+      }
+    });
+  }
+
+  ['dragenter','dragover'].forEach(e => {
+    drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('dragover'); });
+  });
+  ['dragleave','drop'].forEach(e => {
+    drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('dragover'); });
+  });
+  drop.addEventListener('drop', function(ev) {
+    ev.preventDefault();
+    if (ev.dataTransfer.files.length) {
+      fileInput.files = ev.dataTransfer.files;
+      fileName.textContent = '📎 ' + ev.dataTransfer.files[0].name;
+      fileName.style.display = 'block';
+      fileText.style.display = 'none';
+    }
+  });
+</script>
+{% endblock %}
